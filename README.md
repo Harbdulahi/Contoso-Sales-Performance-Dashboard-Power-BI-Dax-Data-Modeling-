@@ -2,10 +2,8 @@
 # Contoso Sales Performance Analysis (PostgreSQL)
 
 ## Overview
-This project analyzes Contoso’s global sales data using PostgreSQL to produce business-ready metrics and insights.  
-The output of the SQL analysis feeds a sales performance dashboard covering revenue, profit, quantity sold, customer distribution, product performance, and geographical trends.
-
-This is a pure analytics project. No machine learning. All results are derived from SQL queries.
+This project analyzes Contoso’s global sales data store in PostgreSQL to produce business-ready metrics and insights.  
+The output feeds a sales performance dashboard covering revenue, profit, quantity sold, customer distribution, product performance, and geographical trends.
 
 ---
 
@@ -33,16 +31,12 @@ The dataset follows a star schema and contains transactional sales data with sup
   - `order_date_key`
   - `customer_key`
   - `product_key`
-  - `geography_key`
 
 ### Dimension Tables
 - `dim_customer`
 - `dim_product`
-- `dim_category`
 - `dim_date`
-- `dim_geography`
 
-All data is stored and queried in PostgreSQL.
 
 ---
 
@@ -51,7 +45,7 @@ The project uses a star schema to enable fast aggregation and slicing.
 
 - Central fact table: `fact_sales`
 - Dimensions connected via surrogate keys
-- Optimized for time-series, category, customer, and geography analysis
+- Optimized for time-series, category, and customer analysis
 
 This structure aligns with BI tools such as Power BI.
 
@@ -69,84 +63,11 @@ This structure aligns with BI tools such as Power BI.
 
 ---
 
-## SQL Analysis
 
-### Total Revenue, Profit, and Quantity
-```sql
-SELECT
-    SUM(sales_amount) AS total_revenue,
-    SUM(profit) AS total_profit,
-    SUM(quantity) AS total_quantity
-FROM fact_sales;
-````
-
-### Customer Count
-
-```sql
-SELECT COUNT(DISTINCT customer_key) AS customer_count
-FROM fact_sales;
-```
-
-### Sales by Year
-
-```sql
-SELECT
-    d.year,
-    SUM(f.sales_amount) AS revenue
-FROM fact_sales f
-JOIN dim_date d
-    ON f.order_date_key = d.date_key
-GROUP BY d.year
-ORDER BY d.year;
-```
-
-### Top 5 Product Categories by Revenue
-
-```sql
-SELECT
-    c.category_name,
-    SUM(f.sales_amount) AS revenue
-FROM fact_sales f
-JOIN dim_product p
-    ON f.product_key = p.product_key
-JOIN dim_category c
-    ON p.category_key = c.category_key
-GROUP BY c.category_name
-ORDER BY revenue DESC
-LIMIT 5;
-```
-
-### Top 5 Countries by Revenue
-
-```sql
-SELECT
-    g.country,
-    SUM(f.sales_amount) AS revenue
-FROM fact_sales f
-JOIN dim_geography g
-    ON f.geography_key = g.geography_key
-GROUP BY g.country
-ORDER BY revenue DESC
-LIMIT 5;
-```
-
-### Customer Distribution by Continent
-
-```sql
-SELECT
-    g.continent,
-    COUNT(DISTINCT f.customer_key) AS customer_count
-FROM fact_sales f
-JOIN dim_geography g
-    ON f.geography_key = g.geography_key
-GROUP BY g.continent;
-```
-
----
 
 ## Dashboard
 
-The Power BI dashboard is built directly on top of the SQL outputs.
+![Contoso Dashboard](Contoso/up3.jpg)
 
 ### Visuals Included
 
@@ -154,35 +75,11 @@ The Power BI dashboard is built directly on top of the SQL outputs.
 * Line chart: Sales by Year
 * Bar charts: Top Categories and Top Countries
 * Donut chart: Customer Distribution by Continent
-* Map: Geographical Sales Performance
+* Shape Map: Geographical Sales Performance
 
-Each visual maps one-to-one with a SQL query.
-
----
-
-## Repository Structure
-
-```
-contoso-sales-performance/
-│
-├── sql/
-│   ├── schema.sql
-│   ├── data_loading.sql
-│   ├── kpi_queries.sql
-│   ├── sales_trends.sql
-│   ├── product_analysis.sql
-│   ├── geography_analysis.sql
-│
-├── dashboard/
-│   └── contoso_sales_dashboard.pbix
-│
-├── images/
-│   └── dashboard_preview.png
-│
-└── README.md
-```
 
 ---
+
 
 ## Insights
 
@@ -204,9 +101,10 @@ contoso-sales-performance/
 ## Tools Used
 
 * PostgreSQL
-* SQL (joins, aggregations, CTEs, date functions)
+* Power Query
+* Data Modeling
+* DAX syntax
 * Power BI (visualization)
-* GitHub (version control and portfolio hosting)
 
 ---
 
@@ -219,6 +117,5 @@ This project demonstrates:
 * KPI-driven dashboards
 * Analytics engineering fundamentals
 
-Suitable for Data Analyst, BI Analyst, and Analytics Engineer portfolios.
 
 
